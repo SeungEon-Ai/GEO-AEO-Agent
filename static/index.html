@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Content Optimizer — SEO·AEO·GEO + Gemini AI</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Libre+Baskerville:wght@400;700&family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f6f1eb;--card:#fff;--alt:#f0ebe3;--bdr:#ddd5c9;--txt:#2c2418;--sec:#6b5e4f;--dim:#9e9183;--acc:#b84a1c;--accBg:#fef3ec;--grn:#2d7a50;--grnBg:#edf7f1;--red:#b83a2b;--blu:#2558a0;--bluBg:#eef4fb;--pur:#6d3cc7;--purBg:#f3effe;--gld:#a07608;--sh:0 1px 3px rgba(44,36,24,.06)}
+body{font-family:'Pretendard',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+button{font-family:inherit;cursor:pointer}a{color:var(--blu)}.mono{font-family:'DM Mono',monospace}
+.header{padding:28px 22px 18px;border-bottom:1px solid var(--bdr);background:linear-gradient(180deg,var(--card),var(--bg))}
+.header h1{font-size:21px;font-weight:700;font-family:'Libre Baskerville',serif}
+.header p{font-size:11px;color:var(--dim);margin-top:3px}
+.types{display:flex;gap:5px;overflow-x:auto;padding:14px 18px 0}
+.tbtn{padding:7px 12px;border-radius:8px;border:1.5px solid var(--bdr);background:var(--card);display:flex;align-items:center;gap:5px;white-space:nowrap;transition:.15s}
+.tbtn.on{border-color:var(--acc);background:var(--accBg)}
+.tbtn .l{font-size:11px;font-weight:500;color:var(--txt)}.tbtn.on .l{font-weight:700;color:var(--acc)}
+.inp{padding:12px 18px}
+textarea{width:100%;min-height:110px;padding:14px;background:var(--card);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:13px;line-height:1.7;resize:vertical;outline:none;font-family:inherit;box-shadow:var(--sh)}
+textarea:focus{border-color:var(--acc)}
+.brow{display:flex;gap:8px;margin-top:8px}
+.bmain{flex:1;padding:12px;background:var(--acc);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700}
+.bmain:disabled{background:var(--bdr);color:var(--dim);cursor:not-allowed}
+.bsec{padding:12px 14px;background:var(--card);color:var(--sec);border:1.5px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:600}
+.res{padding:0 18px 30px}
+.srow{display:flex;justify-content:center;align-items:flex-end;gap:10px;padding:16px 10px;background:var(--card);border-radius:14px;border:1px solid var(--bdr);margin-bottom:10px;box-shadow:var(--sh)}
+.slbl{font-size:10px;font-weight:700;margin-top:1px;text-align:center}
+.qrow{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px}
+.qbox{padding:7px 4px;background:var(--card);border-radius:8px;border:1px solid var(--bdr);text-align:center;box-shadow:var(--sh)}
+.qbox .v{font-size:16px;font-weight:800}.qbox .k{font-size:9px;color:var(--dim)}
+.tabs{display:flex;gap:2px;margin-bottom:10px;background:var(--alt);border-radius:10px;padding:3px;border:1px solid var(--bdr)}
+.tab{flex:1;padding:9px 4px;background:transparent;border:1px solid transparent;border-radius:8px;font-size:11px;font-weight:500;color:var(--dim)}
+.tab.on{background:var(--card);border-color:var(--bdr);font-weight:700;color:var(--acc);box-shadow:var(--sh)}
+.panel{background:var(--card);border-radius:14px;border:1px solid var(--bdr);overflow:hidden;box-shadow:var(--sh)}
+.pad{padding:14px 16px}
+.fold{margin-bottom:8px;border:1px solid var(--bdr);border-radius:10px;overflow:hidden;background:var(--card);box-shadow:var(--sh)}
+.fhd{width:100%;display:flex;justify-content:space-between;align-items:center;padding:13px 16px;background:none;border:none;text-align:left}
+.ftl{font-size:13px;font-weight:700}.far{font-size:16px;color:var(--dim);transition:transform .2s}.far.o{transform:rotate(180deg)}
+.fbd{padding:0 16px 14px}
+.tipw{padding:8px 10px;background:var(--alt);border-radius:6px;border-left:3px solid var(--acc);margin:6px 0;font-size:12px;color:var(--sec);line-height:1.7}
+.plink{font-size:10px;color:var(--blu);margin-top:2px}
+.prow{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card);border-radius:10px;margin-bottom:6px;border:1px solid var(--bdr)}
+.picon{font-size:22px}.pname{font-weight:700;font-size:13px}.pprob{font-weight:800;font-size:15px}
+.pbar{height:4px;background:var(--bdr);border-radius:2px;margin:4px 0;overflow:hidden}
+.pfill{height:100%;border-radius:2px;transition:width .5s}
+.pnote{font-size:10px;color:var(--dim)}.pref{font-size:9px;color:var(--blu);margin-top:1px}
+.chat{display:flex;flex-direction:column;height:440px}
+.cmsgs{flex:1;overflow-y:auto;padding:12px 16px}
+.cbub{max-width:85%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-word;margin-bottom:10px}
+.cusr{background:var(--acc);color:#fff;margin-left:auto}
+.cmod{background:var(--card);border:1px solid var(--bdr);color:var(--txt)}
+.cirow{padding:10px 14px;border-top:1px solid var(--bdr);display:flex;gap:8px}
+.cinp{flex:1;padding:10px 14px;border:1.5px solid var(--bdr);border-radius:8px;font-size:13px;outline:none;font-family:inherit;background:var(--card)}
+.cinp:focus{border-color:var(--acc)}
+.csnd{padding:10px 16px;background:var(--acc);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700}
+.csnd:disabled{background:var(--bdr);cursor:not-allowed}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
+.chip{padding:6px 12px;background:var(--alt);border:1px solid var(--bdr);border-radius:20px;font-size:11px;color:var(--sec)}
+.dots{display:flex;gap:4px;padding:10px 14px}
+.dots span{width:8px;height:8px;border-radius:50%;background:var(--dim);animation:p 1s infinite}
+.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+@keyframes p{0%,100%{opacity:.3}50%{opacity:1}}
+.empty{padding:50px 30px;text-align:center}.eicon{font-size:40px;margin-bottom:12px;opacity:.3}
+.loading-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(246,241,235,.8);display:flex;align-items:center;justify-content:center;z-index:100}
+.spinner{width:40px;height:40px;border:4px solid var(--bdr);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.bi{margin-bottom:14px}.bt{display:flex;justify-content:space-between;margin-bottom:2px}
+.blbl{font-size:13px;font-weight:600}.bsc{font-size:13px;font-weight:700}
+.brk{height:5px;background:var(--bdr);border-radius:3px;overflow:hidden}
+.bfl{height:100%;border-radius:3px;transition:width .5s}
+.bd{font-size:11px;color:var(--dim);margin-top:2px}
+.badge{font-size:10px;font-weight:700;color:var(--pur);background:var(--purBg);padding:1px 6px;border-radius:4px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+const {useState,useCallback,useEffect,useRef}=React;
+const e=React.createElement;
+
+const TYPES=[
+  {id:"blog",icon:"📝",label:"블로그/글"},
+  {id:"webpage",icon:"🌐",label:"홈페이지"},
+  {id:"youtube",icon:"🎬",label:"YouTube"},
+  {id:"shorts",icon:"⚡",label:"Shorts/릴스"},
+  {id:"sns",icon:"📱",label:"SNS"},
+];
+const PAPERS={
+  geo:{title:"GEO: Generative Engine Optimization",venue:"ACM SIGKDD 2024",url:"https://arxiv.org/abs/2311.09735"},
+  auto:{title:"What Generative Search Engines Like",venue:"arXiv 2025",url:"https://arxiv.org/abs/2510.11438"},
+  beyond:{title:"Beyond Retrieval: Modeling Confidence Decay in GEO",venue:"arXiv 2025",url:"https://arxiv.org/abs/2604.03656"},
+  mech:{title:"GEO: Mechanics, Strategy, and Economic Impact",venue:"ResearchGate 2025",url:"https://www.researchgate.net/publication/398120277"},
+};
+
+// ── Backend API calls ──
+async function apiAnalyze(text,contentType){
+  const r=await fetch("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text,content_type:contentType})});
+  if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.detail||"분석 실패")}
+  return r.json();
+}
+async function apiChat(message,history,ctx){
+  const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message,history,analysis_context:ctx})});
+  if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.detail||"채팅 실패")}
+  return r.json();
+}
+
+// ── Components ──
+function Gauge({score,size=100}){
+  const[a,setA]=useState(0);
+  useEffect(()=>{let i=0;const f=()=>{i+=2;if(i>=score){setA(score);return}setA(i);requestAnimationFrame(f)};requestAnimationFrame(f)},[score]);
+  const r=size/2-8,c=2*Math.PI*r;
+  const col=score>=70?"var(--grn)":score>=40?"var(--gld)":"var(--red)";
+  return e("svg",{width:size,height:size,viewBox:`0 0 ${size} ${size}`},
+    e("circle",{cx:size/2,cy:size/2,r,fill:"none",stroke:"var(--bdr)",strokeWidth:5}),
+    e("circle",{cx:size/2,cy:size/2,r,fill:"none",stroke:col,strokeWidth:5,strokeDasharray:c,strokeDashoffset:c-(a/100)*c,strokeLinecap:"round",transform:`rotate(-90 ${size/2} ${size/2})`,style:{transition:"stroke-dashoffset .6s"}}),
+    e("text",{x:size/2,y:size/2+2,textAnchor:"middle",fill:col,fontSize:size/3.5,fontWeight:800,className:"mono"},a)
+  );
+}
+
+function Fold({title,children,open:def=false,color="var(--acc)"}){
+  const[open,setOpen]=useState(def);
+  return e("div",{className:"fold"},
+    e("button",{className:"fhd",onClick:()=>setOpen(!open)},e("span",{className:"ftl",style:{color}},title),e("span",{className:`far ${open?"o":""}`},"▾")),
+    open&&e("div",{className:"fbd"},children)
+  );
+}
+
+function MetaBar({label,value,max,color}){
+  const pct=Math.min(100,Math.round(value/max*100));
+  const c=pct>=70?"var(--grn)":pct>=40?"var(--gld)":"var(--red)";
+  return e("div",{className:"bi"},
+    e("div",{className:"bt"},e("span",{className:"blbl"},label),e("span",{className:"bsc mono",style:{color:c}},value)),
+    e("div",{className:"brk"},e("div",{className:"bfl",style:{width:`${pct}%`,background:c}}))
+  );
+}
+
+function SuggestionItem({s}){
+  return e(Fold,{title:`${s.priority==="높음"?"🔴":"🟡"} ${s.text}`,color:s.priority==="높음"?"var(--red)":"var(--gld)"},
+    e("div",null,
+      e("div",{className:"tipw"},e("strong",{style:{color:"var(--acc)"}},"상세: "),s.detail),
+      e("div",{className:"plink"},"📄 ",e("a",{href:s.paper_url,target:"_blank",rel:"noreferrer"},s.paper))
+    )
+  );
+}
+
+function PlatRow({name,prob,note,ref:rf}){
+  const icons={"ChatGPT":"🤖","Perplexity":"🔍","Google AI Overview":"🌐","네이버 AI 브리핑":"🇰🇷","Claude":"✨"};
+  const col=prob>=60?"var(--grn)":prob>=35?"var(--gld)":"var(--red)";
+  return e("div",{className:"prow"},
+    e("span",{className:"picon"},icons[name]||"🔮"),
+    e("div",{style:{flex:1}},
+      e("div",{style:{display:"flex",justifyContent:"space-between"}},e("span",{className:"pname"},name),e("span",{className:"pprob mono",style:{color:col}},prob,"%")),
+      e("div",{className:"pbar"},e("div",{className:"pfill",style:{width:`${prob}%`,background:col}})),
+      e("div",{className:"pnote"},note),
+      rf&&e("div",{className:"pref"},"📚 ",rf)
+    )
+  );
+}
+
+// ── Score Tab with bars ──
+function ScoreTab({result}){
+  const m=result.meta;
+  const seoItems=[
+    {l:"통계/수치",v:m.stats,max:4,d:`${m.stats}개 감지 — 최대 +40% 가시성`},
+    {l:"출처 인용",v:m.citations,max:3,d:`${m.citations}개 — 5위 사이트 +115%`},
+    {l:"전문가 인용문",v:m.quotes,max:3,d:`${m.quotes}개 — Top 3 GEO 전략`},
+    {l:"헤딩 구조",v:m.headings,max:4,d:`${m.headings}개 헤딩`},
+    {l:"질문형 헤딩",v:m.question_headings,max:3,d:`${m.question_headings}개`},
+    {l:"리스트/구조화",v:m.lists,max:5,d:`${m.lists}개 리스트 항목`},
+  ];
+  return e("div",null,
+    e(Fold,{title:`🔍 SEO (${result.seo}점)`,open:true,color:"var(--blu)"},
+      e("div",{style:{fontSize:12,color:"var(--dim)",marginBottom:10,lineHeight:1.8}},
+        `📝 ${m.word_count}단어 · 🏷️ ${m.headings} 헤딩 · ❓ ${m.question_headings} 질문헤딩`,e("br"),
+        `✅ Answer-first: ${m.answer_first?"예":"아니오"} · ⚠️ 키워드스터핑: ${m.keyword_stuffing?"감지":"정상"}`
+      ),
+      seoItems.map((it,i)=>e(MetaBar,{key:i,label:it.l,value:it.v,max:it.max,color:"var(--blu)"})),
+    ),
+    e(Fold,{title:`💡 AEO (${result.aeo}점)`,color:"var(--pur)"},
+      e("div",{style:{fontSize:12,color:"var(--dim)",lineHeight:1.8,marginBottom:8}},
+        m.answer_first?"✅ 답변 우선 배치 확인":"❌ 답변 우선 배치 없음 — H2 직후 40~60단어 요약 필요",e("br"),
+        m.question_headings>0?"✅ 질문형 헤딩 사용":"❌ 질문형 헤딩 없음 — '~란?', '어떻게 ~?' 패턴 권장",e("br"),
+        `#️⃣ 해시태그: ${m.hashtags}개 · 📋 콘텐츠 유형: ${m.content_type}`
+      )
+    ),
+    e(Fold,{title:`🧬 GEO (${result.geo}점)`,color:"var(--grn)"},
+      e("div",{style:{fontSize:12,color:"var(--dim)",lineHeight:1.8,marginBottom:8}},
+        `통계 ${m.stats}개 (권장: 3+) · 인용 ${m.citations}개 (권장: 2+) · 인용문 ${m.quotes}개 (권장: 2+)`
+      ),
+      [{l:"📊 통계 데이터",v:m.stats,max:4,d:"+40%"},{l:"📎 출처 인용",v:m.citations,max:3,d:"+115%"},{l:"💬 전문가 인용문",v:m.quotes,max:3,d:"Top3"}].map((it,i)=>
+        e("div",{key:i,className:"bi"},
+          e("div",{className:"bt"},
+            e("span",{className:"blbl"},it.l),
+            e("div",{style:{display:"flex",gap:6,alignItems:"center"}},
+              e("span",{className:"badge"},it.d),
+              e("span",{className:"bsc mono",style:{color:it.v>=it.max?"var(--grn)":it.v>0?"var(--gld)":"var(--red)"}},it.v)
+            )
+          ),
+          e("div",{className:"brk"},e("div",{className:"bfl",style:{width:`${Math.min(100,it.v/it.max*100)}%`,background:it.v>=it.max?"var(--grn)":it.v>0?"var(--gld)":"var(--red)"}}))
+        )
+      )
+    )
+  );
+}
+
+// ── Chat (backend proxy) ──
+function Chat({analysis}){
+  const[msgs,setMsgs]=useState([]);
+  const[input,setInput]=useState("");
+  const[loading,setLoading]=useState(false);
+  const endRef=useRef(null);
+  useEffect(()=>{endRef.current?.scrollIntoView({behavior:"smooth"})},[msgs]);
+
+  const send=async()=>{
+    if(!input.trim()||loading)return;
+    const txt=input.trim();setInput("");
+    const nm=[...msgs,{role:"user",text:txt}];setMsgs(nm);setLoading(true);
+    try{
+      const hist=nm.slice(0,-1).map(m=>({role:m.role==="user"?"user":"model",text:m.text}));
+      const data=await apiChat(txt,hist,analysis);
+      setMsgs([...nm,{role:"model",text:data.reply}]);
+    }catch(err){
+      setMsgs([...nm,{role:"model",text:`⚠️ ${err.message}`}]);
+    }
+    setLoading(false);
+  };
+
+  return e("div",{className:"chat"},
+    e("div",{className:"cmsgs"},
+      msgs.length===0&&e("div",{style:{textAlign:"center",padding:"30px 10px",color:"var(--dim)",fontSize:12,lineHeight:1.8}},
+        "🧬 Gemini 2.5 Flash (서버 연결)",e("br"),"분석 결과 기반으로 질문하세요",
+        e("div",{className:"chips"},
+          ["GEO 점수 올리려면?","네이버 AI에 노출되려면?","이 글을 최적화해줘"].map((q,i)=>e("button",{key:i,className:"chip",onClick:()=>setInput(q)},q))
+        )
+      ),
+      msgs.map((m,i)=>e("div",{key:i,style:{display:"flex",justifyContent:m.role==="user"?"flex-end":"flex-start",marginBottom:10}},
+        e("div",{className:`cbub ${m.role==="user"?"cusr":"cmod"}`},m.text)
+      )),
+      loading&&e("div",{className:"dots"},e("span"),e("span"),e("span")),
+      e("div",{ref:endRef})
+    ),
+    e("div",{className:"cirow"},
+      e("input",{className:"cinp",value:input,onChange:ev=>setInput(ev.target.value),onKeyDown:ev=>ev.key==="Enter"&&send(),placeholder:"SEO/AEO/GEO 질문..."}),
+      e("button",{className:"csnd",onClick:send,disabled:!input.trim()||loading},"전송")
+    )
+  );
+}
+
+// ── Main App ──
+function App(){
+  const[text,setText]=useState("");
+  const[ctype,setCtype]=useState("blog");
+  const[result,setResult]=useState(null);
+  const[tab,setTab]=useState("score");
+  const[busy,setBusy]=useState(false);
+  const[apiOk,setApiOk]=useState(null);
+
+  useEffect(()=>{fetch("/api/health").then(r=>r.json()).then(d=>setApiOk(d.gemini_configured)).catch(()=>setApiOk(false))},[]);
+
+  const run=useCallback(async()=>{
+    setBusy(true);
+    try{const r=await apiAnalyze(text,ctype);setResult(r);setTab("score")}
+    catch(err){alert(err.message)}
+    setBusy(false);
+  },[text,ctype]);
+
+  const sample=()=>{setText("## 생성형 AI 시대의 콘텐츠 마케팅 전략\n\n콘텐츠 마케팅은 AI 검색 엔진의 등장으로 근본적인 변화를 겪고 있다.\n\n## AI 검색 최적화란 무엇인가?\n\nPrinceton 대학 연구(Aggarwal et al., 2024)에 따르면, GEO 전략을 적용한 콘텐츠는 AI 응답에서의 가시성이 최대 40% 향상되었다. 특히 검색 순위 5위 사이트에서는 115%의 가시성 증가를 기록했다.\n\n\"AI 시대에는 클릭을 최적화하는 것이 아니라, 인용될 수 있는 콘텐츠를 만드는 것이 핵심이다\" — 김민수 박사\n\n## 어떻게 콘텐츠를 최적화하는가?\n\nGartner는 2026년까지 전통적 검색 볼륨이 25% 감소할 것으로 예측한다.\n\n- 구체적 수치 포함 (예: \"전환율 47% 증가\")\n- 학술 논문 등 신뢰 출처 인용\n- 전문가 직접 인용문 포함\n- FAQPage, HowTo 스키마 마크업\n\nAhrefs(2025)에 의하면, AI Overview 등장 시 1위 CTR이 58% 감소한다.\n\n## 왜 지금 시작해야 하는가?\n\nChatGPT 주당 8억 명 사용, AI 추천 방문자 전환율 일반 대비 4.4배. Acquia 조사: 70% 기업 AEO 인식, 20%만 실행.");setCtype("blog")};
+
+  const tabs=[{id:"score",l:"📊 점수"},{id:"optimize",l:"🔧 최적화"},{id:"simulate",l:"🤖 AI 인용"},{id:"chat",l:"💬 AI 상담"}];
+  const platNotes={"ChatGPT":"Wikipedia 7.8%, Reddit +87%","Perplexity":"Google 28% 중복, .edu 선호","Google AI Overview":"SERP 76% 중복, 미국 55%+","네이버 AI 브리핑":"블로그·카페 우선, AI Briefing 20%","Claude":"구조화·통계 기반 선호"};
+  const platRefs={"ChatGPT":"Profound (2025)","Perplexity":"Ahrefs (2025)","Google AI Overview":"Ahrefs (2025)","네이버 AI 브리핑":"Asiance (2025)","Claude":"Conductor (2025)"};
+
+  return e("div",null,
+    busy&&e("div",{className:"loading-overlay"},e("div",{className:"spinner"})),
+
+    e("div",{className:"header"},
+      e("h1",null,"Content Optimizer"),
+      e("p",null,"SEO · AEO · GEO 분석 + Gemini AI 상담",
+        apiOk===true?" · ✅ API 연결됨":apiOk===false?" · ⚠️ API 키 미설정":""
+      )
+    ),
+
+    e("div",{className:"types"},TYPES.map(t=>
+      e("button",{key:t.id,className:`tbtn ${ctype===t.id?"on":""}`,onClick:()=>setCtype(t.id)},
+        e("span",{style:{fontSize:14}},t.icon),e("span",{className:"l"},t.label))
+    )),
+
+    e("div",{className:"inp"},
+      e("textarea",{value:text,onChange:ev=>setText(ev.target.value),placeholder:["shorts","sns"].includes(ctype)?"영상 제목, 설명문, 해시태그...":"분석할 글을 붙여넣으세요..."}),
+      e("div",{className:"brow"},
+        e("button",{className:"bmain",onClick:run,disabled:text.trim().length<10||busy},busy?"분석 중...":"분석 시작"),
+        e("button",{className:"bsec",onClick:sample},"샘플")
+      )
+    ),
+
+    result&&e("div",{className:"res"},
+      // Gauges
+      e("div",{className:"srow"},
+        e("div",{style:{textAlign:"center"}},e(Gauge,{score:result.seo,size:72}),e("div",{className:"slbl",style:{color:"var(--blu)"}},"SEO")),
+        e("div",{style:{textAlign:"center"}},e(Gauge,{score:result.aeo,size:72}),e("div",{className:"slbl",style:{color:"var(--pur)"}},"AEO")),
+        e("div",{style:{textAlign:"center"}},e(Gauge,{score:result.overall,size:100}),e("div",{className:"slbl",style:{color:"var(--acc)",fontSize:11,fontWeight:800}},"TOTAL")),
+        e("div",{style:{textAlign:"center"}},e(Gauge,{score:result.geo,size:72}),e("div",{className:"slbl",style:{color:"var(--grn)"}},"GEO"))
+      ),
+      // Quick stats
+      e("div",{className:"qrow"},
+        [{v:result.meta.stats,l:"통계",i:"📊"},{v:result.meta.citations,l:"인용",i:"📎"},{v:result.meta.quotes,l:"인용문",i:"💬"},{v:result.meta.word_count,l:"단어",i:"📝"}].map((m,i)=>
+          e("div",{key:i,className:"qbox"},e("div",{style:{fontSize:12}},m.i),e("div",{className:"v mono"},m.v),e("div",{className:"k"},m.l))
+        )
+      ),
+      // Tabs
+      e("div",{className:"tabs"},tabs.map(t=>e("button",{key:t.id,className:`tab ${tab===t.id?"on":""}`,onClick:()=>setTab(t.id)},t.l))),
+      // Panel
+      e("div",{className:"panel"},
+        tab==="score"&&e("div",{className:"pad"},e(ScoreTab,{result})),
+
+        tab==="optimize"&&e("div",{className:"pad"},
+          result.suggestions.length===0?
+            e("div",{style:{padding:24,textAlign:"center",background:"var(--grnBg)",borderRadius:10}},e("div",{style:{fontSize:28}},"🎉"),e("div",{style:{fontSize:14,fontWeight:700,color:"var(--grn)",marginTop:6}},"모든 항목 양호!")):
+            result.suggestions.map((s,i)=>e(SuggestionItem,{key:i,s})),
+          e(Fold,{title:"📖 참고 논문",color:"var(--sec)"},
+            e("div",{style:{fontSize:11,color:"var(--sec)",lineHeight:2}},
+              Object.values(PAPERS).map((p,i)=>e("div",{key:i},"📄 ",e("a",{href:p.url,target:"_blank",rel:"noreferrer"},p.title)," — ",p.venue)),
+              e("div",{style:{marginTop:8,fontWeight:700}},"업계 보고서"),
+              e("div",null,"🔗 ",e("a",{href:"https://www.asiance.com/blog/2025/07/25/your-brand-on-naver-what-ai-search-means-for-online-visibility-in-korea/",target:"_blank"},"Asiance (2025)")," — 네이버 AI Briefing"),
+              e("div",null,"🔗 ",e("a",{href:"https://www.frase.io/blog/what-is-answer-engine-optimization-the-complete-guide-to-getting-cited-by-ai",target:"_blank"},"Frase.io (2026)")," — AEO Guide"),
+              e("div",null,"🔗 ",e("a",{href:"https://blog.hubspot.com/marketing/answer-engine-optimization-trends",target:"_blank"},"HubSpot (2026)")," — AEO Trends"),
+              e("div",null,"🔗 ",e("a",{href:"https://almcorp.com/blog/aeo-geo-benchmarks-2025-conductor-analysis-complete-guide/",target:"_blank"},"Conductor (2025)")," — GEO Benchmarks")
+            )
+          )
+        ),
+
+        tab==="simulate"&&e("div",{className:"pad"},
+          e("div",{style:{fontSize:11,color:"var(--pur)",marginBottom:12,padding:"8px 12px",background:"var(--purBg)",borderRadius:8,borderLeft:"3px solid var(--pur)",lineHeight:1.5}},"Princeton GEO 논문 기반 AI 플랫폼별 인용 확률 추정 (네이버 포함)"),
+          Object.entries(result.platforms).map(([name,prob],i)=>
+            e(PlatRow,{key:i,name,prob,note:platNotes[name]||"",ref:platRefs[name]||""})
+          )
+        ),
+
+        tab==="chat"&&e(Chat,{analysis:result})
+      )
+    ),
+
+    !result&&e("div",{className:"empty"},
+      e("div",{className:"eicon"},"✍️"),
+      e("div",{style:{fontSize:13,color:"var(--dim)",lineHeight:1.7}},"콘텐츠 유형 선택 → 글 붙여넣기 → ",e("span",{style:{color:"var(--acc)",fontWeight:700}},"분석 시작"))
+    )
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(e(App));
+</script>
+</body>
+</html>
